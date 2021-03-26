@@ -1,0 +1,39 @@
+ - hosts: all
+   tasks:
+   - yum_repository:
+           baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable/"
+           name: "docker1"
+           description: "my docker dvd"
+           gpgcheck: no
+          
+   - package:
+           name: "docker-ce-3:18.09.1-3.el7.x86_64"
+           state: "present"   
+   - service:        
+           name: "docker"
+           state: started  
+           enabled: yes
+   - pip:
+           name: "docker"
+
+   - docker_image:
+           name: "httpd"
+           source: pull
+
+   - copy:
+           dest: "/webpages/sans_webpage.html"
+           content: "welcome to sans webpage!!!"
+   - docker_container:
+           name: "webserver"
+           image: httpd
+           state: started
+           exposed_ports:
+                   - 80
+           ports:
+                   - 8080:80 
+
+           volumes: /webpages:/usr/local/apache2/htdocs/
+
+
+           
+                    
